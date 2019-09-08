@@ -220,7 +220,7 @@ function resetEventsList() {
 }
 
 function inputValidationNumber(number, min, max) {
-  if (number < min || typeof(number) != "number")
+  if (number < min)
     return min;
   else if (number > max)
     return max;
