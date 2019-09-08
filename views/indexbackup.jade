@@ -1,0 +1,45 @@
+extends layout
+
+div(class="container")
+  div(class="search")
+    block content
+      
+      form(method="POST", action="/spotifySearchArtist")
+        label(for="inp_artist") Artist
+        input(id="inp_artist", name="query", type="text", placeholder="Search for artist")
+        input(type="submit", value="Search")
+
+    block artist
+
+      h1 #{data.artist.name}
+      
+      img(src="#{data.artist.img}")
+
+      h3 Find live perfomrances similar to #{data.artist.name}
+        
+      form(method="POST", action="/songkick")
+        label(for="inp_number") Number of related artists
+        input(id="inp_number", name="number", type="number", value="5")
+        label(for="inp_amount") Number of events per artist
+        input(id="inp_amount", name="amount", type="number", value="10")
+        input(type="submit", value="Get live events")
+  div(class="show")
+    block concerts
+      
+      - i = 0;
+      - max = data.performances.length
+      while i < max
+        a(class="concertlink", href="#{data.performances[i].uri}", target="_blank")
+          div(class="infobox")
+            div(class="text")
+              h3 #{data.performances[i].title}
+              p #{data.performances[i].artist}
+              p #{data.performances[i].venue}
+              p #{data.performances[i].city}
+              p #{data.performances[i].timeanddate}
+            div(class="maps")
+              iframe(width="300", height="300", frameborder="0", style="border:0", src="https://www.google.com/maps/embed/v1/place?key=#{data.googleKey}&q=#{data.performances[i].venue}#{data.performances[i].city}", allowfullscreen)
+        - i++;
+        
+    block errorMessage
+      h3 We were not able to find any similar artists or performances

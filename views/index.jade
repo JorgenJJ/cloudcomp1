@@ -1,0 +1,55 @@
+extends layout
+
+block content
+  div(class="container")
+    div(class="search")
+      div(class="artistSearch")
+        p(id="test")
+    
+        form(method="POST", action="/spotifySearchArtist")
+          label(for="inp_artist") Search for an artist
+          input(id="inp_artist", name="query", type="text", placeholder="#{data.defaultValues.inputArtistFeedback}" value="#{data.defaultValues.inputArtist}")
+          input(type="submit", value="Search")
+      
+      - if (data.toggleVisibilty.artistNotHidden) {
+
+        div(class="artistInfoBox")
+          div(class="artistPicture")
+            img(src="#{data.artist.img}")
+          div(class="artistText")
+            h1 #{data.artist.name}
+
+        div(class="performanceSearch")
+          h3 Find live perfomrances similar to #{data.artist.name}
+      
+          form(method="POST", action="/songkick")
+            label(for="inp_number") Number of related artists (max 10)
+            input(id="inp_number", name="number", type="number", value="#{data.defaultValues.inputNumber}")
+            label(for="inp_amount") Number of events per artist (max 10)
+            input(id="inp_amount", name="amount", type="number", value="#{data.defaultValues.inputAmount}")
+            input(type="submit", value="Get live events")
+      - }
+    - if (data.toggleVisibilty.resultsNotHidden) {
+    div(class="show" id="showDiv")
+      div(class="showPerformances")
+    
+        - i = 0;
+        - max = data.performances.length
+        while i < max
+          a(class="concertlink", href="#{data.performances[i].uri}", target="_blank")
+            div(class="infobox")
+              div(class="text")
+                h3 #{data.performances[i].title}
+                p #{data.performances[i].artist}
+                p #{data.performances[i].venue}
+                p #{data.performances[i].city}
+                p #{data.performances[i].timeanddate}
+              div(class="maps")
+                iframe(width="200", height="200", frameborder="0", style="border:0", src="https://www.google.com/maps/embed/v1/place?key=AIzaSyC-sLg39d2L0pJh73HHyVhAP3YW0avmTcg&q=#{data.performances[i].venue}#{data.performances[i].city}&zoom=10", allowfullscreen)
+          - i++;
+      
+        - if (data.toggleVisibilty.resultsNotHidden && data.performances.length == 0) {
+        div(class="showError")
+          h3 We were not able to find any similar artists or performances
+        - }
+    - }
